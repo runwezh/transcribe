@@ -5,6 +5,7 @@ import tempfile
 import datetime
 import whisper
 import warnings  # 新增导入
+import librosa  # 新增导入
 
 def is_video_file(file_path: str) -> bool:
     # 简单判断是否为视频文件，可根据需求扩展支持的格式
@@ -99,6 +100,19 @@ def get_output_path(input_path: str, output_dir: str, ext: str) -> str:
     basename = os.path.splitext(os.path.basename(input_path))[0]
     return os.path.join(output_dir, f"{basename}{ext}")
 
+def detect_beats(audio_path: str) -> list:
+    """检测音频文件中的节拍"""
+    y, sr = librosa.load(audio_path, sr=None)
+    tempo, beats = librosa.beat.beat_track(y=y, sr=sr)
+    beat_times = librosa.frames_to_time(beats, sr=sr)
+    return beat_times
+
+def save_beats_to_file(beat_times: list, output_path: str) -> None:
+    """将节拍时间点保存到文件"""
+    with open(output_path, "w", encoding="utf-8") as f:
+        for beat_time in beat_times:
+            f.write(f"{beat_time:.1f}\n")
+
 def process_single_file(input_path: str, output_dir: str, model) -> None:
     """处理单个文件的转录"""
     print(f"\n处理文件: {input_path}")
@@ -133,6 +147,19 @@ def process_single_file(input_path: str, output_dir: str, model) -> None:
             f.write(generator(segments))
     
     print(f"字幕文件生成成功，保存在目录: {output_dir}")
+
+    # 检测节拍并保存到文件
+    print("检测节拍中，请稍候……")
+    beat_times = detect_beats(audio_path)
+    beat_output_path = get_output_path(input_path, output_dir, ".beats.txt")
+    with open(beat_output_path, "w", encoding="utf-8") as f:
+        f.write(",".join(f"{beat_time:.1f}" for beat_time in beat_times))
+    print(f"节拍文件生成成功，保存在: {beat_output_path}")
+    # print("检测节拍中，请稍候……")
+    # beat_times = detect_beats(audio_path)
+    # beat_output_path = get_output_path(input_path, output_dir, ".beats.txt")
+    # save_beats_to_file(beat_times, beat_output_path)
+    # print(f"节拍文件生成成功，保存在: {beat_output_path}")
 
     # 如果创建了临时音频文件，保存音频文件到output目录
     if delete_audio_after:
