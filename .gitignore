@@ -35,6 +35,9 @@ output/*
 *.mov
 *.flv
 
+# Model files
+model/*
+
 # IDE
 .idea/
 .vscode/
