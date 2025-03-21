@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑文本</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/edit.css') }}">
+    <style>
+        /* 编辑器文字排版优化 */
+        #editor {
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            padding: 20px;
+            font-size: 16px;
+        }
+        
+        #editor .word {
+            margin: 0 2px;
+            padding: 3px 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        #editor .word:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        
+        #editor .word.selected {
+            background-color: rgba(0, 123, 255, 0.2);
+            font-weight: 500;
+        }
+        
+        #editor .word .timestamp {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            background-color: #f0f0f0;
+            padding: 1px 4px;
+            border-radius: 3px;
+            color: #666;
+            white-space: nowrap;
+            opacity: 0.8;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        #editor .word.punctuation {
+            margin-left: 0;
+            padding-left: 2px;
+        }
+        
+        #editor .line-break {
+            display: block;
+            height: 0.8em;
+        }
+        
+        /* 段落样式 */
+        #editor .paragraph {
+            margin-bottom: 1em;
+            text-indent: 2em;
+        }
+        
+        /* 时间轴标尺优化 */
+        .timeline-ruler {
+            height: 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* 编辑器容器滚动优化 */
+        .editor-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        /* 滚动条美化 */
+        .editor-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .editor-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .editor-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        
+        .editor-container::-webkit-scrollbar-thumb:hover {
+            background: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文本编辑器</h1>
+        
+        <div class="card">
+            <div class="toolbar">
+                <button id="save-btn" class="button primary-btn">保存修改</button>
+                <button id="preview-btn" class="button">预览</button>
+                <button id="show-timestamps-btn" class="button">显示/隐藏时间戳</button>
+                <button id="auto-adjust-btn" class="button">自动调整时间戳</button>
+                <a href="/" class="button">返回首页</a>
+                <a href="{{ url_for('download_file', date=date, filename=filename) }}" class="button">下载JSON</a>
+            </div>
+            
+            <div class="editor-controls">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="搜索文本...">
+                    <button id="search-btn" class="button">搜索</button>
+                </div>
+                <div class="time-controls">
+                    <label>时间调整步长:</label>
+                    <input type="number" id="time-step" value="0.1" step="0.1" min="0.1">
+                    <button id="time-increase-btn" class="button small-btn">+</button>
+                    <button id="time-decrease-btn" class="button small-btn">-</button>
+                </div>
+            </div>
+            
+            <div class="editor-container">
+                <div class="timeline-ruler" id="timeline-ruler"></div>
+                <div id="editor">
+                    <!-- 文本将通过JavaScript动态加载 -->
+                </div>
+            </div>
+            
+            <div class="word-actions">
+                <button id="merge-btn" class="button action-btn" disabled>合并选中词语</button>
+                <button id="split-btn" class="button action-btn" disabled>拆分选中词语</button>
+                <button id="delete-btn" class="button action-btn danger-btn" disabled>删除选中词语</button>
+                <span id="selection-info" class="selection-info">未选中任何词语</span>
+            </div>
+            
+            <div class="instructions">
+                <h3>使用说明:</h3>
+                <ul>
+                    <li><strong>选择操作:</strong> 点击词语可以选中/取消选中</li>
+                    <li><strong>拆分词语:</strong> 选中单个词语后点击"拆分选中词语"按钮</li>
+                    <li><strong>合并词语:</strong> 选中多个连续词语后点击"合并选中词语"按钮</li>
+                    <li><strong>调整时间:</strong> 选中词语后使用"+"和"-"按钮调整时间</li>
+                    <li><strong>显示时间戳:</strong> 点击"显示/隐藏时间戳"按钮可以切换时间戳显示</li>
+                    <li><strong>自动调整:</strong> "自动调整时间戳"按钮可以重新计算所有词语的时间间隔</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="preview-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>预览</h2>
+                <div id="preview-content"></div>
+            </div>
+        </div>
+        
+        <div id="split-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>拆分词语</h2>
+                <p>当前词语: <span id="current-word"></span></p>
+                <div class="form-group">
+                    <label for="split-input">请输入拆分后的文本 (用空格分隔):</label>
+                    <input type="text" id="split-input" class="full-width">
+                </div>
+                <button id="confirm-split" class="button primary-btn">确认拆分</button>
+            </div>
+        </div>
+        
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <p>处理中，请稍候...</p>
+        </div>
+    </div>
+    
+    <script>
+        // 初始数据
+        const initialData = {{ data|tojson }};
+        const date = "{{ date }}";
+        const filename = "{{ filename }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/edit.js') }}"></script>
+</body>
+</html>

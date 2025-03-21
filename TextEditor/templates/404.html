@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 - 音频转写工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+        .error-message {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .error-description {
+            font-size: 18px;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        .button-group {
+            margin-top: 30px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .background-shape {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: rgba(231, 76, 60, 0.05);
+            z-index: -1;
+        }
+        .shape-1 {
+            top: -100px;
+            left: -100px;
+        }
+        .shape-2 {
+            bottom: -150px;
+            right: -50px;
+            width: 400px;
+            height: 400px;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @media (max-width: 600px) {
+            .error-code {
+                font-size: 80px;
+            }
+            .error-message {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card error-container">
+            <div class="background-shape shape-1"></div>
+            <div class="background-shape shape-2"></div>
+            <div class="error-code">404</div>
+            <div class="error-message">页面未找到</div>
+            <p class="error-description">很抱歉，您请求的页面不存在或已被移动。请检查URL是否正确，或使用下方按钮返回首页继续浏览。</p>
+            <div class="button-group">
+                <a href="/" class="button">返回首页</a>
+                <a href="javascript:history.back()" class="button" style="background-color: #2ecc71; margin-left: 15px;">返回上一页</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
