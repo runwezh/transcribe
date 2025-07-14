@@ -30,10 +30,15 @@ class AliyunTranscriber:
         self.formatter = OutputFormatter()
         self.logger = logging.getLogger('AliyunTranscriber')
     
-    def is_audio_file(self, file_path: str) -> bool:
-        """检查是否为支持的音频文件"""
-        audio_extensions = ['.wav', '.mp3', '.aac', '.m4a', '.wma', '.flac', '.pcm']
-        return Path(file_path).suffix.lower() in audio_extensions
+    def is_supported_file(self, file_path: str) -> bool:
+        """检查是否为支持的媒体文件（音频或视频）"""
+        supported_extensions = [
+            # 音频
+            '.wav', '.mp3', '.aac', '.m4a', '.wma', '.flac', '.pcm',
+            # 视频
+            '.mp4', '.mov', '.mkv', '.avi', '.flv'
+        ]
+        return Path(file_path).suffix.lower() in supported_extensions
     
     def process_file(self, input_path: str, mode: str, output_dir: str, 
                     formats: List[str]) -> bool:
@@ -45,7 +50,7 @@ class AliyunTranscriber:
                 self.logger.error(f"文件不存在: {input_path}")
                 return False
             
-            if not self.is_audio_file(input_path):
+            if not self.is_supported_file(input_path):
                 self.logger.error(f"不支持的文件格式: {input_path}")
                 return False
             
@@ -153,7 +158,7 @@ def main():
     parser.add_argument(
         'input_files',
         nargs='+',
-        help='输入音频文件路径'
+        help='输入媒体文件路径（支持音频和视频）'
     )
     
     parser.add_argument(

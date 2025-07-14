@@ -1,17 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const audioFileInput = document.getElementById('audio-file');
+    const mediaFileInput = document.getElementById('media-file');
     const subtitleFileInput = document.getElementById('subtitle-file');
-    const audioPlayer = document.getElementById('audio-player');
+    const mediaPlayer = document.getElementById('media-player');
     const subtitleContainer = document.getElementById('subtitle-container');
 
     let subtitles = [];
     let subtitleType = 'sentence'; // 'sentence' or 'word'
 
-    audioFileInput.addEventListener('change', (event) => {
+    mediaFileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
             const url = URL.createObjectURL(file);
-            audioPlayer.src = url;
+            mediaPlayer.src = url;
         }
     });
 
@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    audioPlayer.addEventListener('timeupdate', () => {
-        const currentTime = audioPlayer.currentTime;
+    mediaPlayer.addEventListener('timeupdate', () => {
+        const currentTime = mediaPlayer.currentTime;
         if (subtitleType === 'sentence') {
             updateSentenceHighlight(currentTime);
         } else if (subtitleType === 'word') {
