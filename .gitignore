@@ -40,3 +40,7 @@ output/*
 .vscode/
 *.swp
 *.swo
+
+*output
+.env
+*.log

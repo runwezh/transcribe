@@ -1,0 +1,82 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+}
+
+h1 {
+    color: #1a1a1a;
+}
+
+.file-selector {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+}
+
+.file-input-group {
+    margin-bottom: 15px;
+}
+
+.file-input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+audio {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+#subtitle-container {
+    width: 100%;
+    max-width: 600px;
+    min-height: 100px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+    font-size: 1.2em;
+    line-height: 1.6;
+    text-align: center;
+}
+
+#subtitle-container .sentence {
+    margin-bottom: 10px;
+}
+
+#subtitle-container .word {
+    transition: background-color 0.2s ease;
+}
+
+#subtitle-container .active-sentence {
+    font-weight: bold;
+    color: #0056b3;
+}
+
+#subtitle-container .active-word {
+    background-color: #ffc107;
+    color: #000;
+    border-radius: 3px;
+    padding: 0 3px;
+}

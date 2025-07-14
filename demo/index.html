@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音频字幕同步 Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>音频字幕同步 Demo</h1>
+    <div class="file-selector">
+        <div class="file-input-group">
+            <label for="audio-file">选择音频文件:</label>
+            <input type="file" id="audio-file" accept="audio/*">
+        </div>
+        <div class="file-input-group">
+            <label for="subtitle-file">选择字幕文件 (.vtt, .srt, .json):</label>
+            <input type="file" id="subtitle-file" accept=".vtt,.srt,.json">
+        </div>
+    </div>
+
+    <audio id="audio-player" controls></audio>
+
+    <div id="subtitle-container">
+        <p>请先选择音频和字幕文件。</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
